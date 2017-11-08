@@ -30,7 +30,12 @@ Sample requests:
 
 http://127.0.0.1:8000/widget/HOTEL_HASH_TEST.js
 
+On web page just use :
+
+<script src="http://127.0.0.1:8000/widget/HOTEL_HASH_TEST.js"></script>
+
 To run unit tests
 ```
     ./vendor/phpunit/phpunit/phpunit
 ```
+
