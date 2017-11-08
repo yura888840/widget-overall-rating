@@ -40,7 +40,7 @@ class DefaultController extends Controller
         $renderer = $this->get('AppBundle\\Services\\TwigRenderer');
         $content = $renderer->render('widget_js', $avgRating);
 
-//        $response->setCache(['max_age' => 3600]);
+        $response->setCache(['max_age' => 3600]);
         $response->headers->add(['Access-Control-Allow-Origin'=> '*']);
         $response->setContent($content);
 
