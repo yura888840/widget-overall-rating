@@ -10,6 +10,11 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Class Review
+ * @ORM\Entity
+ * @package AppBundle\Entity
+ */
 class Review
 {
     /**
@@ -34,7 +39,7 @@ class Review
 
     /**
      * @var Hotel
-     * @ManyToOne(targetEntity="AppBundle\Entity\Hotel", inversedBy="reviews", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Hotel", inversedBy="reviews", cascade={"persist"})
      * @ORM\JoinColumn(name="hotel_uuid", referencedColumnName="UUID")
      */
     private $hotel;

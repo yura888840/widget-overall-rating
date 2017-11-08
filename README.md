@@ -1,6 +1,21 @@
 widget-overall-rating
 =====================
 
+Fork repository
+
+After this, you should do first of all
+```
+    composer install
+```
+
+You will be asked for database connection settings.
+
+By next step you should create database. Run from project folder
+```
+    php bin/console doctrine:database:create
+    php bin/console doctrine:schema:update --force
+```
+
 To test the project simplest way is to run build-in web server. You
 can run it by
 

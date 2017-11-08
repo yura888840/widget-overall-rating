@@ -33,9 +33,8 @@ class Hotel
     private $name;
 
     /**
-     * @Type("Review")
      * @var Review
-     * @OneToMany(targetEntity="Review", mappedBy="hotel", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Review", mappedBy="hotel", cascade={"persist"})
      */
     protected $reviews;
 
