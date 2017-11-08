@@ -28,7 +28,7 @@ class TwigRendererTest extends \PHPUnit\Framework\TestCase
     {
         $avg = 55;
 
-        $actual = $this->renderer->render('js', 55);
+        $actual = $this->renderer->render('widget_js', 55);
         $expected = file_get_contents(__DIR__.'/fixtures/output.js');
 
         $this->assertEquals($expected, $actual);
