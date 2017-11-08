@@ -14,6 +14,7 @@ By next step you should create database. Run from project folder
 ```
     php bin/console doctrine:database:create
     php bin/console doctrine:schema:update --force
+    php bin/console doctrine:database:import data/hotel_db.sql
 ```
 
 To test the project simplest way is to run build-in web server. You
