@@ -41,6 +41,7 @@ class DefaultController extends Controller
         $content = $renderer->render('js', $avgRating);
 
         $response->setCache(['max_age' => 3600]);
+        $response->headers->add(['Access-Control-Allow-Origin'=> '*']);
         $response->setContent($content);
 
         return $response;
