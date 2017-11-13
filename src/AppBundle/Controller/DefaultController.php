@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
 
 class DefaultController extends Controller
 {
@@ -20,29 +21,38 @@ class DefaultController extends Controller
     {
         /** @var HotelRepository $hotelRepository */
         $hotelRepository = $em->getRepository(Hotel::class);
-        $hotel = $hotelRepository
-            ->find($UUID);
-
-        if (!$hotel) {
-            throw new \RuntimeException('No hotel with UUID: ' . $UUID);
-        }
-
-        try {
-            $avgRating = $hotelRepository->getAverageRatingWithinLastYearForHotel($UUID);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Database error. (Need to handle it properly, but not implemented)');
-        }
 
         /** @var Response $response */
         $response = new Response();
 
-        /** @var TwigRenderer $renderer */
-        $renderer = $this->get('AppBundle\\Services\\TwigRenderer');
-        $content = $renderer->render('widget_js', $avgRating);
+        try {
+            $hotel = $hotelRepository
+                ->find($UUID);
 
-        $response->setCache(['max_age' => 3600]);
-        $response->headers->add(['Access-Control-Allow-Origin'=> '*']);
-        $response->setContent($content);
+            if (!$hotel) {
+                throw new \RuntimeException('No hotel with UUID: ' . $UUID);
+            }
+
+            $avgRating = $hotelRepository->getAverageRatingWithinLastYearForHotel($UUID);
+
+            /** @var TwigRenderer $renderer */
+            $renderer = $this->get('AppBundle\\Services\\TwigRenderer');
+            $content = $renderer->render('widget_js', $avgRating);
+
+            $response->setCache(['max_age' => 3600]);
+        } catch (\Exception $e) {
+            $content = '';
+            /** LoggerInterface */
+            $logger = $this->get('logger');
+            $logger->critical('An error occurred while running banner application', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'exception' => serialize($e)
+            ]);
+        } finally {
+            $response->headers->add(['Access-Control-Allow-Origin'=> '*']);
+            $response->setContent($content);
+        }
 
         return $response;
     }
