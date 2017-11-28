@@ -36,7 +36,7 @@ class DefaultController extends Controller
                 ->find($UUID);
 
             if (!$hotel) {
-                throw new \RuntimeException('No hotel with UUID: ' . $UUID);
+                throw new HttpException(Response::HTTP_NOT_FOUND, 'No hotel with UUID: ' . $UUID);
             }
 
             $avgRating = $hotelRepository->getAverageRatingWithinLastYearForHotel($UUID);
@@ -78,7 +78,7 @@ class DefaultController extends Controller
             ->find($UUID);
 
         if (!$hotel) {
-            throw new \RuntimeException('No hotel with UUID: ' . $UUID);
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'No hotel with UUID: ' . $UUID);
         }
 
         $data = $hotelRepository->getOverallRatingAndCount($UUID);
@@ -104,7 +104,7 @@ class DefaultController extends Controller
             ->find($UUID);
 
         if (!$hotel) {
-            throw new \RuntimeException('No hotel with UUID: ' . $UUID);
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'No hotel with UUID: ' . $UUID);
         }
 
         $query = $hotelRepository->getReviewQuery($UUID);

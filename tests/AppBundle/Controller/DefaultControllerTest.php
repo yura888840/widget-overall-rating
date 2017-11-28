@@ -11,7 +11,7 @@ class DefaultControllerTest extends WebTestCase
         $client = static::createClient();
 
         $client->request('GET', '/rating/HOTEL_HASH_TEST1');
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
     public function testOverallCountEndpoint()
