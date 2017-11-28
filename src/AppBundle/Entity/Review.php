@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class Review
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ReviewRepository")
+ * @ORM\Entity()
  * @package AppBundle\Entity
  */
 class Review

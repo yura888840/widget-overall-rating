@@ -7,6 +7,7 @@ use AppBundle\Entity\Review;
 use AppBundle\Repository\HotelRepository;
 use AppBundle\Services\TwigRenderer;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\FOSRestController;
 use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\Serializer;
 
 class DefaultController extends Controller
@@ -93,11 +95,18 @@ class DefaultController extends Controller
     {
         $outputFormat = strtolower($request->get('format', 'json'));
         if (!in_array($outputFormat, ['json', 'xml'])) {
-            $outputFormat = 'json';
+            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Output format not correct');
         }
 
         /** @var HotelRepository $hotelRepository */
         $hotelRepository = $em->getRepository(Hotel::class);
+        $hotel = $hotelRepository
+            ->find($UUID);
+
+        if (!$hotel) {
+            throw new \RuntimeException('No hotel with UUID: ' . $UUID);
+        }
+
         $query = $hotelRepository->getReviewQuery($UUID);
 
         /** @var Paginator $pager */
@@ -118,6 +127,7 @@ class DefaultController extends Controller
                 'review' => $paginated->getItems()
             ]
         ], $outputFormat);
+
         /** @var Response $response */
         $response = new Response();
 
