@@ -33,3 +33,15 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    AppBundle\Repository\HotelRepository:
+        factory: doctrine.orm.entity_manager:getRepository
+        arguments:
+          - AppBundle\Entity\Hotel
+
+    AppBundle\Services\PaginatedRepresentationBuilder:
+        class: AppBundle\Services\PaginatedRepresentationBuilder
+        arguments:
+          - '@request_stack'
+          - '@AppBundle\Repository\HotelRepository'
+          - '%items_per_page%'

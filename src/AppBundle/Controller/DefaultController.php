@@ -3,11 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Hotel;
-use AppBundle\Entity\Review;
 use AppBundle\Repository\HotelRepository;
+use AppBundle\Services\PaginatedRepresentation;
 use AppBundle\Services\TwigRenderer;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Controller\FOSRestController;
 use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -107,32 +106,37 @@ class DefaultController extends Controller
             throw new HttpException(Response::HTTP_NOT_FOUND, 'No hotel with UUID: ' . $UUID);
         }
 
+        $perPage    = $this->getParameter('items_per_page');
+        $page       = $request->query->getInt('page', 1);
+
+        /** @var \Doctrine\ORM\Query $query */
         $query = $hotelRepository->getReviewQuery($UUID);
 
         /** @var Paginator $pager */
-        $pager      = $this->get('knp_paginator');
-        $perPage    = $this->getParameter('items_per_page');
+        $pager = $this->get('knp_paginator');
 
+        /** @var array $paginated */
         $paginated = $pager->paginate(
             $query,
-            $request->query->getInt('page',  1),
+            $page,
             $request->query->getInt('limit', $perPage)
         );
+
+        /** @var PaginatedRepresentation $representationService */
+        $representationService = $this->get('AppBundle\\Services\\PaginatedRepresentationBuilder');
+        /** @var array $paginatedAsArray */
+        $paginatedAsArray = $representationService->create($paginated, $outputFormat, $page, $UUID);
 
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
 
-        $data = $serializer->serialize([
-            'reviews' => [
-                'review' => $paginated->getItems()
-            ]
-        ], $outputFormat);
+        $data = $serializer->serialize($paginatedAsArray, $outputFormat);
 
         /** @var Response $response */
         $response = new Response();
 
         $response->setContent($data);
-        $response->headers->add(['Content-type' => sprintf('application/%s', $outputFormat)]);
+        $response->headers->add(['Content-type' => sprintf('Application/%s', $outputFormat)]);
 
         return $response;
     }

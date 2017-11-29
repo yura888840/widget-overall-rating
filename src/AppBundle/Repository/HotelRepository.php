@@ -10,6 +10,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Review;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 class HotelRepository extends EntityRepository
 {
@@ -66,5 +67,27 @@ class HotelRepository extends EntityRepository
         ;
 
         return $qb->getQuery();
+    }
+
+    /**
+     * @param string $UUID
+     * @return int
+     */
+    public function getTotalReviewCountForHotel($UUID)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb
+            ->select('COUNT(r.id)')
+            ->from('AppBundle\Entity\Review', 'r')
+            ->where('r.hotel=:hotel')
+            ->setParameter('hotel', $UUID)
+        ;
+
+        /** @var int $query */
+        $total = (int) $qb->getQuery()
+            ->getSingleScalarResult();
+
+        return $total;
     }
 }
